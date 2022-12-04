@@ -2,22 +2,22 @@ import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { mutate } from 'swr'
 
-const Form = ({ formId, petForm, forNewPet = true }) => {
+const Form = ({ formId, productForm, forNewProduct = true }) => {
   const router = useRouter()
   const contentType = 'application/json'
   const [errors, setErrors] = useState({})
   const [message, setMessage] = useState('')
 
   const [form, setForm] = useState({
-    name: petForm.name,
-    owner_name: petForm.owner_name,
-    species: petForm.species,
-    age: petForm.age,
-    poddy_trained: petForm.poddy_trained,
-    diet: petForm.diet,
-    image_url: petForm.image_url,
-    likes: petForm.likes,
-    dislikes: petForm.dislikes,
+    name: productForm.name,
+    owner_name: productForm.owner_name,
+    species: productForm.species,
+    age: productForm.age,
+    poddy_trained: productForm.poddy_trained,
+    diet: productForm.diet,
+    image_url: productForm.image_url,
+    likes: productForm.likes,
+    dislikes: productForm.dislikes,
   })
 
   /* The PUT method edits an existing entry in the mongodb database. */
@@ -25,7 +25,7 @@ const Form = ({ formId, petForm, forNewPet = true }) => {
     const { id } = router.query
 
     try {
-      const res = await fetch(`/api/pets/${id}`, {
+      const res = await fetch(`/api/products/${id}`, {
         method: 'PUT',
         headers: {
           Accept: contentType,
@@ -41,17 +41,17 @@ const Form = ({ formId, petForm, forNewPet = true }) => {
 
       const { data } = await res.json()
 
-      mutate(`/api/pets/${id}`, data, false) // Update the local data without a revalidation
+      mutate(`/api/products/${id}`, data, false) // Update the local data without a revalidation
       router.push('/')
     } catch (error) {
-      setMessage('Failed to update pet')
+      setMessage('Failed to update product')
     }
   }
 
   /* The POST method adds a new entry in the mongodb database. */
   const postData = async (form) => {
     try {
-      const res = await fetch('/api/pets', {
+      const res = await fetch('/api/products', {
         method: 'POST',
         headers: {
           Accept: contentType,
@@ -67,7 +67,7 @@ const Form = ({ formId, petForm, forNewPet = true }) => {
 
       router.push('/')
     } catch (error) {
-      setMessage('Failed to add pet')
+      setMessage('Failed to add product')
     }
   }
 
@@ -83,7 +83,7 @@ const Form = ({ formId, petForm, forNewPet = true }) => {
     })
   }
 
-  /* Makes sure pet info is filled for pet name, owner name, species, and image url*/
+  /* Makes sure product info is filled for product name, owner name, species, and image url*/
   const formValidate = () => {
     let err = {}
     if (!form.name) err.name = 'Name is required'
@@ -97,7 +97,7 @@ const Form = ({ formId, petForm, forNewPet = true }) => {
     e.preventDefault()
     const errs = formValidate()
     if (Object.keys(errs).length === 0) {
-      forNewPet ? postData(form) : putData(form)
+      forNewProduct ? postData(form) : putData(form)
     } else {
       setErrors({ errs })
     }
